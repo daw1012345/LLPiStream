@@ -62,7 +62,7 @@ Usage of llpistream:
 * 
 #### Instructions
 * `> llpistream --codec video/H264 &`
-* `> gst-launch-1.0 videotestsrc ! "video/x-raw,height=720,width=1280,framerate=30/1" ! queue ! videoconvert ! videoscale ! x264enc tune=zerolatency speed-preset=6 ! rtph264pay ! udpsink host=127.0.0.1 port=8082`
+* `> gst-launch-1.0 videotestsrc ! "video/x-raw,height=720,width=1280,framerate=30/1" ! queue ! videoconvert ! videoscale ! queue ! x264enc tune=zerolatency speed-preset=6 ! "video/x-h264,profile=constrained-baseline,width=1280,height=720,stream-format=byte-stream" ! rtph264pay ! udpsink host=127.0.0.1 port=8082`
 * Open `localhost:8080` in a browser
 
 ### VP8 vs H264
