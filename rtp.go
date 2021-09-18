@@ -10,8 +10,17 @@ import (
 
 var track *webrtc.TrackLocalStaticRTP
 
-func Init() {
-	ltrack, err := webrtc.NewTrackLocalStaticRTP(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeVP8}, "video", "pion")
+func InitWebRTCTrack(mime string, sid string) {
+	switch mime {
+	case "video/VP8":
+		break
+	case "video/H264":
+		break
+	default:
+		log.Panicln("Unsupported codec selected!")
+	}
+
+	ltrack, err := webrtc.NewTrackLocalStaticRTP(webrtc.RTPCodecCapability{MimeType: mime}, "video", sid)
 
 	if err != nil {
 		log.Panicln(err)
@@ -20,18 +29,20 @@ func Init() {
 	track = ltrack
 }
 
-func StartUDPRTPServer() {
-	ln, err := net.ListenUDP("udp4", &net.UDPAddr{
-		IP: net.ParseIP("127.0.0.1"),
-		Port: 5004,
+func RunUDPRTPServer(ip string, port int) {
+	ln, err := net.ListenUDP("udp", &net.UDPAddr{
+		IP:   net.ParseIP(ip),
+		Port: port,
 	})
 
 	if err != nil {
 		log.Panicln(err)
 	}
+
 	defer ln.Close()
 
-	log.Println("Listening on udp://localhost:8091")
+	log.Printf("Listening for RTP packets on udp://%s:%d", ip, port)
+
 	buf := make([]byte, 1600)
 
 	for {

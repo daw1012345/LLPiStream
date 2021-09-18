@@ -1,4 +1,4 @@
-module github.com/pion/examples
+module llpistream
 
 go 1.17
 
