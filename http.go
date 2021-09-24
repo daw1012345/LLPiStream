@@ -31,6 +31,17 @@ func OnNewPeer(w http.ResponseWriter, r *http.Request) {
 	// Create a peer and add the video track to it so
 	peerConnection := MakePeer()
 
+	peerConnection.OnConnectionStateChange(func(state webrtc.PeerConnectionState) {
+		log.Printf("PeerConnection state changed: %s", state)
+		switch state {
+		case webrtc.PeerConnectionStateDisconnected:
+			fallthrough
+		case webrtc.PeerConnectionStateFailed:
+			log.Println("Explicitly closing peer connection...")
+			_ = peerConnection.Close()
+		}
+	})
+
 	// Initialise the object with the offer we got from the peer (to negotiate
 	if err := peerConnection.SetRemoteDescription(offer); err != nil {
 		log.Panicln(err)
